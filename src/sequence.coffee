@@ -26,12 +26,11 @@ a4.sequence = (container) ->
       .attr
         x: (d, i) -> xScale i
         y:  0
-        width: (xScale 1) - 1
-        height: height - 1
+        width: xScale 1
+        height: height
         display: (d, i) -> if d? then undefined else 'none'
       .style
         fill: (d, i) -> colorScale d
-        stroke: (d, i) -> (d3.rgb colorScale d).darker()
 
 
   # Get/set the SVG group to use
