@@ -1,7 +1,7 @@
 # sequence.coffee
 # Renders a sequence of letters as colored rectangles.
 a4 = a4 ? {}
-a4.sequence = () ->
+a4.sequence = (container) ->
   width = 100
   height = 20
   data = []
@@ -12,7 +12,7 @@ a4.sequence = () ->
              'R', 'S', 'T', 'V', 'W', 'Y']
 
 
-  my = (container) ->
+  my = () ->
     xScale.domain [0, data.length]
           .range [0, width]
 
@@ -32,6 +32,15 @@ a4.sequence = () ->
       .style
         fill: (d, i) -> colorScale d
         stroke: (d, i) -> (d3.rgb colorScale d).darker()
+
+
+  # Get/set the SVG group to use
+  my.container = (_container) ->
+    if _container?
+      container = _container
+      return my
+    else
+      return container
 
 
   # Get/set the width of the entire sequence

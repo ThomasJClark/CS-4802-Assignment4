@@ -36,64 +36,48 @@ align = (seq1, seq2) ->
   return [seq1Aligned, seq2Aligned]
 
 $ ->
-  svg = d3.select '#container'
-    .append 'svg'
-      .attr
-        width: 1024
-        height: 640
+  # Update the SVG based on the currently selected sequences
+  update = () ->
+    [aligned1, aligned2] = align sequenceSelect1.sequence(), sequenceSelect2.sequence()
+    sequence1.data aligned1
+    sequence2.data aligned2
+    sequence1()
+    sequence2()
 
-  seq1Group = svg.append 'g'
-    .attr 'transform', 'translate(0, 0)'
-  seq1 = a4.sequence()
-    .width 1024
-    .height 25
+  container = d3.select '#container'
 
-  seq2Group = svg.append 'g'
-    .attr 'transform', 'translate(0, 25)'
-  seq2 = a4.sequence()
-    .width 1024
-    .height 25
+  svg = container.append 'svg'
+    .attr
+      width: 1024
+      height: 200
+    .style
+      display: 'block'
 
-  seq3Group = svg.append 'g'
-    .attr 'transform', 'translate(0, 75)'
-  seq3 = a4.sequence()
-    .width 1024
-    .height 25
+  sequence1 = a4.sequence()
+    .width 1022
+    .height 10
+    .container (svg.append 'g').attr 'transform', 'translate(1, 0)'
 
-  seq4Group = svg.append 'g'
-    .attr 'transform', 'translate(0, 100)'
-  seq4 = a4.sequence()
-    .width 1024
-    .height 25
+  sequence2 = a4.sequence()
+    .width 1022
+    .height 10
+    .container (svg.append 'g').attr 'transform', 'translate(1, 10)'
 
-  seq5Group = svg.append 'g'
-    .attr 'transform', 'translate(0, 150)'
-  seq5 = a4.sequence()
-    .width 1024
-    .height 25
+  sequenceSelect1 = a4.sequenceSelect()
+    .container container.append 'select'
+    .change (d) -> update()
 
-  seq6Group = svg.append 'g'
-    .attr 'transform', 'translate(0, 175)'
-  seq6 = a4.sequence()
-    .width 1024
-    .height 25
+  sequenceSelect2 = a4.sequenceSelect()
+    .container container.append 'select'
+    .change (d) -> update()
 
   d3.json 'data.json'
-    .get (error, sequences) ->
-      [seq1Data, seq2Data] = align sequences.dutAquae, sequences.dutBraja
-      [seq3Data, seq4Data] = align sequences.dutBraja, sequences.dutCanal
-      [seq5Data, seq6Data] = align sequences.dutCanal, sequences.dutAquae
+    .get (error, data) ->
+      sequences = data.sequences
 
-      seq1.data seq1Data
-      seq2.data seq2Data
-      seq3.data seq3Data
-      seq4.data seq4Data
-      seq5.data seq5Data
-      seq6.data seq6Data
+      sequenceSelect1.data sequences
+      sequenceSelect2.data sequences
+      sequenceSelect1()
+      sequenceSelect2()
 
-      seq1Group.call seq1
-      seq2Group.call seq2
-      seq3Group.call seq3
-      seq4Group.call seq4
-      seq5Group.call seq5
-      seq6Group.call seq6
+      update()
