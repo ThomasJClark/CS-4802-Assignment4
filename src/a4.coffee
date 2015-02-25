@@ -35,11 +35,65 @@ align = (seq1, seq2) ->
 
   return [seq1Aligned, seq2Aligned]
 
+$ ->
+  svg = d3.select '#container'
+    .append 'svg'
+      .attr
+        width: 1024
+        height: 640
 
-d3.json 'data.json'
-  .get (error, sequences) ->
-    seq1 = sequences.dutAquae
-    seq2 = sequences.dutBraja
-    [seq1Aligned, seq2Aligned] = align seq1, seq2
-    console.log (seq1Aligned.map (c) -> if c? then c else ' ').join ' '
-    console.log (seq2Aligned.map (c) -> if c? then c else ' ').join ' '
+  seq1Group = svg.append 'g'
+    .attr 'transform', 'translate(0, 0)'
+  seq1 = a4.sequence()
+    .width 1024
+    .height 25
+
+  seq2Group = svg.append 'g'
+    .attr 'transform', 'translate(0, 25)'
+  seq2 = a4.sequence()
+    .width 1024
+    .height 25
+
+  seq3Group = svg.append 'g'
+    .attr 'transform', 'translate(0, 75)'
+  seq3 = a4.sequence()
+    .width 1024
+    .height 25
+
+  seq4Group = svg.append 'g'
+    .attr 'transform', 'translate(0, 100)'
+  seq4 = a4.sequence()
+    .width 1024
+    .height 25
+
+  seq5Group = svg.append 'g'
+    .attr 'transform', 'translate(0, 150)'
+  seq5 = a4.sequence()
+    .width 1024
+    .height 25
+
+  seq6Group = svg.append 'g'
+    .attr 'transform', 'translate(0, 175)'
+  seq6 = a4.sequence()
+    .width 1024
+    .height 25
+
+  d3.json 'data.json'
+    .get (error, sequences) ->
+      [seq1Data, seq2Data] = align sequences.dutAquae, sequences.dutBraja
+      [seq3Data, seq4Data] = align sequences.dutBraja, sequences.dutCanal
+      [seq5Data, seq6Data] = align sequences.dutCanal, sequences.dutAquae
+
+      seq1.data seq1Data
+      seq2.data seq2Data
+      seq3.data seq3Data
+      seq4.data seq4Data
+      seq5.data seq5Data
+      seq6.data seq6Data
+
+      seq1Group.call seq1
+      seq2Group.call seq2
+      seq3Group.call seq3
+      seq4Group.call seq4
+      seq5Group.call seq5
+      seq6Group.call seq6
