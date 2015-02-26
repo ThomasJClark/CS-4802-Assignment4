@@ -46,22 +46,47 @@ $ ->
 
   container = d3.select '#container'
 
+  # Adjust the scale on each sequence to zoom in or out
+  zoom = () ->
+    sequence1Transform = d3.transform sequence1.container().attr 'transform'
+    sequence2Transform = d3.transform sequence2.container().attr 'transform'
+    sequence1Transform.scale[0] = d3.event.scale
+    sequence2Transform.scale[0] = d3.event.scale
+    sequence1.container().attr 'transform', sequence1Transform.toString()
+    sequence2.container().attr 'transform', sequence2Transform.toString()
+
+  # Adjust the translation of each sequence to allow dragging
+  drag = () ->
+    sequence1Transform = d3.transform sequence1.container().attr 'transform'
+    sequence2Transform = d3.transform sequence2.container().attr 'transform'
+    sequence1Transform.translate[0] += d3.event.dx
+    sequence2Transform.translate[0] += d3.event.dx
+    sequence1.container().attr 'transform', sequence1Transform.toString()
+    sequence2.container().attr 'transform', sequence2Transform.toString()
+
   svg = container.append 'svg'
     .attr
       width: 1024
       height: 200
     .style
       display: 'block'
+      'pointer-events': 'all'
+    .call (d3.behavior.zoom().scaleExtent [0.5, 100]).on 'zoom', zoom
+    .call d3.behavior.drag().on 'drag', drag
 
   sequence1 = a4.sequence()
     .width 1022
-    .height 10
-    .container (svg.append 'g').attr 'transform', 'translate(1, 0)'
+    .height 100
+    .container (svg.append 'g').attr
+      transform: 'translate(1, 0)'
+      class: 'sequence'
 
   sequence2 = a4.sequence()
     .width 1022
-    .height 10
-    .container (svg.append 'g').attr 'transform', 'translate(1, 10)'
+    .height 100
+    .container (svg.append 'g').attr
+      transform: 'translate(1, 100)'
+      class: 'sequence'
 
   sequenceSelect1 = a4.sequenceSelect()
     .container container.append 'select'
